@@ -15,6 +15,6 @@ CREATE UNIQUE INDEX idx_unique_login ON auth.user (login);
 
 CREATE TABLE auth.contact (
                               id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-                              phone_number VARCHAR(11) NOT NULL,
+                              phone_number VARCHAR(12) NOT NULL,
                               user_id UUID REFERENCES auth.user(id) ON DELETE CASCADE
 );

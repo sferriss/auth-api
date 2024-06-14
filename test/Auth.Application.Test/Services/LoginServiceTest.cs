@@ -31,20 +31,20 @@ public class LoginServiceTest
         var loginDto = new LoginDto("john_doe", "stringadasdasd");
         var existingUser = UserMock.ExistingUser();
         
-        _userRepositoryMock.Setup(repo => repo.GetByLoginAsync(loginDto.Login))
+        _userRepositoryMock.Setup(x => x.GetByLoginAsync(loginDto.Login))
             .ReturnsAsync(existingUser);
         
-        _passwordHasherMock.Setup(hasher => hasher.VerifyPassword(existingUser.Password, loginDto.Password))
+        _passwordHasherMock.Setup(x => x.VerifyPassword(existingUser.Password, loginDto.Password))
             .Returns(true);
         
-        _tokenServiceMock.Setup(service => service.GenerateToken(existingUser))
-            .Returns("mocked_token");
+        _tokenServiceMock.Setup(x => x.GenerateToken(existingUser))
+            .Returns("asdasdufdghuasidsifjdijf");
 
         // Act
         var token = await _loginService.LoginAsync(loginDto);
 
         // Assert
-        Assert.Equal("mocked_token", token);
+        Assert.Equal("asdasdufdghuasidsifjdijf", token);
     }
 
     [Fact(DisplayName = "Login - Should throw exception when user not found")]

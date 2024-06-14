@@ -207,7 +207,7 @@ public class UserServiceTest
     public async Task GetAsync_ShouldThrowNotFoundException_WhenNoUsersExist()
     {
         // Arrange
-        _userRepositoryMock.Setup(x => x.GetAllContactsAsync())!.ReturnsAsync((User[])null);
+        _userRepositoryMock.Setup(x => x.GetAllContactsAsync())!.ReturnsAsync((User[]?)null);
 
         // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => _userService.GetAsync());

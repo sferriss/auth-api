@@ -53,6 +53,7 @@ internal sealed class UserMapping : IEntityTypeConfiguration<User>
             .HasOne(x => x.Contact)
             .WithOne()
             .HasForeignKey<Contact>("user_id")
-            .HasConstraintName("contact_user_id_fk");
+            .HasConstraintName("contact_user_id_fk")
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
