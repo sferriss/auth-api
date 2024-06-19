@@ -28,7 +28,7 @@ login/admin
 7. Fazer autenticação no endpoint
 
 ```bash
-login/admin
+login
 ```
 ```
 login: admin
