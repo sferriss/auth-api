@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Test", "4 - Test", "{63
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth.Application.Test", "..\test\Auth.Application.Test\Auth.Application.Test.csproj", "{62926CC1-2D83-4169-8E20-434FC0B57CD2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth.Application.IntegrationTest", "..\test\Auth.Application.IntegrationTest\Auth.Application.IntegrationTest.csproj", "{A4F6012F-A6E6-49D4-B482-D93B9448E7D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,7 @@ Global
 		{F75767B0-38D3-4003-8723-0AF954C941F7} = {C81CA541-618D-4BE7-AAFB-C1BEDAAA0BF4}
 		{1E0C9708-F855-4531-84CB-E72683B20E44} = {DF4749C5-9DF7-451D-8240-787AD85375FA}
 		{62926CC1-2D83-4169-8E20-434FC0B57CD2} = {63A091F8-0E2A-4BB3-8D6F-F78C89E92406}
+		{A4F6012F-A6E6-49D4-B482-D93B9448E7D1} = {63A091F8-0E2A-4BB3-8D6F-F78C89E92406}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D1E9C013-2B75-4B11-BBA5-C3208313F5BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -51,5 +54,9 @@ Global
 		{62926CC1-2D83-4169-8E20-434FC0B57CD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62926CC1-2D83-4169-8E20-434FC0B57CD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62926CC1-2D83-4169-8E20-434FC0B57CD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4F6012F-A6E6-49D4-B482-D93B9448E7D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4F6012F-A6E6-49D4-B482-D93B9448E7D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4F6012F-A6E6-49D4-B482-D93B9448E7D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4F6012F-A6E6-49D4-B482-D93B9448E7D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
