@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Npgsql;
 using Testcontainers.PostgreSql;
 
 namespace Auth.Application.IntegrationTest;
@@ -37,7 +36,8 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             });
         });
         
-        ExecuteSqlScript();
+        var script = File.ReadAllText("../../../Initial.sql");
+        _dbContainer.ExecScriptAsync(script);
     }
 
     public Task InitializeAsync()
@@ -48,16 +48,5 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     public new Task DisposeAsync()
     {
         return _dbContainer.StopAsync();
-    }
-    
-    private void ExecuteSqlScript()
-    {
-        var script = File.ReadAllText("../../../Initial.sql");
-    
-        using var connection = new NpgsqlConnection(_dbContainer.GetConnectionString());
-        connection.Open();
-    
-        using var command = new NpgsqlCommand(script, connection);
-        command.ExecuteNonQuery();
     }
 }

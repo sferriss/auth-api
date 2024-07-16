@@ -24,8 +24,8 @@ public class LoginController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(LoginResponse))]
-    public async Task<IActionResult> CreateAsync([FromBody] LoginRequest request)
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponse))]
+    public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
     {
         var token = await _loginService.LoginAsync(_userMapper.ToDto(request));
         return Ok(new LoginResponse(token));
