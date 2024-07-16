@@ -7,12 +7,9 @@ Esse projeto foi construido usando .Net 7, Podman/Docker e PostgresSql
 ```bash
 git clone https://github.com/sferriss/auth-api.git
 ```
-2. Instalar [podman](https://podman-desktop.io/downloads) ou [docker](https://www.docker.com/products/docker-desktop/)
+2. Instalar [docker](https://www.docker.com/products/docker-desktop/)
 
 3. Criar container do banco
-```bash
-podman run --name db -p 5432:5432 -d -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres docker.io/library/postgres:latest
-```
 ```bash
 docker run --name db -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -d postgres:latest
 ```
@@ -20,7 +17,7 @@ docker run --name db -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD
 ```sql
 CREATE DATABASE auth;
 ```
-5. Selecionar o banco criado e rodar o [script](src/Auth.Database/Scripts/Initial.sql) 
+5. Rodar as migrations
 6. Subir a aplicação e chamar o endpoint abaixo para criar o usuário de admin
 ```bash
 login/admin
