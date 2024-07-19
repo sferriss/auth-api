@@ -10,8 +10,6 @@ namespace Auth.Application.IntegrationTest.Services;
 
 public class UserServiceTest : BaseIntegrationTest
 {
-    private const string Url = "http://localhost:5139/user";
-    
     public UserServiceTest(IntegrationTestWebAppFactory factory) : base(factory)
     {
     }
@@ -24,7 +22,7 @@ public class UserServiceTest : BaseIntegrationTest
 
         // Act
         await AuthorizeAsync();
-        var response = await Client.PostAsJsonAsync(Url, request);
+        var response = await Client.PostAsJsonAsync(UrlUser, request);
         var result = await response.Content.ReadAsJsonAsync<CreateEntityResponse>();
 
         // Assert
@@ -40,7 +38,7 @@ public class UserServiceTest : BaseIntegrationTest
 
         // Act
         await AuthorizeAsync("admin", "admin2");
-        var response = await Client.PostAsJsonAsync(Url, request);
+        var response = await Client.PostAsJsonAsync(UrlUser, request);
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -66,12 +64,12 @@ public class UserServiceTest : BaseIntegrationTest
 
         // Act
         await AuthorizeAsync();
-        await Client.PostAsJsonAsync(Url, request);
-        var response2 = await Client.PostAsJsonAsync(Url, request2);
-        var result = await response2.Content.ReadAsJsonAsync<ExceptionResponse>();
+        await Client.PostAsJsonAsync(UrlUser, request);
+        var response = await Client.PostAsJsonAsync(UrlUser, request2);
+        var result = await response.Content.ReadAsJsonAsync<ExceptionResponse>();
 
         // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, response2.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.Equal("Login already exists", result?.Title);
     }
     
@@ -95,12 +93,12 @@ public class UserServiceTest : BaseIntegrationTest
 
         // Act
         await AuthorizeAsync();
-        await Client.PostAsJsonAsync(Url, request);
-        var response2 = await Client.PostAsJsonAsync(Url, request2);
-        var result = await response2.Content.ReadAsJsonAsync<ExceptionResponse>();
+        await Client.PostAsJsonAsync(UrlUser, request);
+        var response = await Client.PostAsJsonAsync(UrlUser, request2);
+        var result = await response.Content.ReadAsJsonAsync<ExceptionResponse>();
 
         // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, response2.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.Equal("Email already exists", result?.Title);
     }
     
@@ -124,12 +122,66 @@ public class UserServiceTest : BaseIntegrationTest
 
         // Act
         await AuthorizeAsync();
-        await Client.PostAsJsonAsync(Url, request);
-        var response2 = await Client.PostAsJsonAsync(Url, request2);
-        var result = await response2.Content.ReadAsJsonAsync<ExceptionResponse>();
+        await Client.PostAsJsonAsync(UrlUser, request);
+        var response = await Client.PostAsJsonAsync(UrlUser, request2);
+        var result = await response.Content.ReadAsJsonAsync<ExceptionResponse>();
 
         // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, response2.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.Equal("Phone number already exists", result?.Title);
+    }
+    
+    [Theory(DisplayName = "Create user - Should return bad request when invalid request")]
+    [InlineData("", "john@example.com", "john", "stringadasdasd", "00123656789")]
+    [InlineData("John Doe", "", "john", "stringadasdasd", "00123656789")]
+    [InlineData("John Doe", "john@example.com", "", "stringadasdasd", "00123656789")]
+    [InlineData("John Doe", "john@example.com", "john", "", "00123656789")]
+    [InlineData("John Doe", "john@example.com", "john", "stri", "00123656789")]
+    [InlineData("John Doe", "john@example.com", "john", "stringadasdasd", "")]
+    [InlineData("John Doe", "john@example.com", "john", "stringadasdasd", "00123656")]
+    [InlineData("John Doe", "john@example.com", "john", "stringadasdasd", "0012365678923423")]
+    public async Task CreateAsync_ShouldReturnBadRequest_WhenInvalidRequest(
+        string name,
+        string email,
+        string login,
+        string password,
+        string phoneNumber)
+    {
+        // Arrange
+        var request = new CreateUserRequest(
+            name,
+            email,
+            login,
+            password,
+            new UserContactRequest(phoneNumber));
+
+        // Act
+        await AuthorizeAsync();
+        var response = await Client.PostAsJsonAsync(UrlUser, request);
+        var result = await response.Content.ReadAsJsonAsync<ExceptionResponse>();
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        
+        if (string.IsNullOrEmpty(name))
+        {
+            Assert.True(result!.Errors!.ContainsKey("Name"));
+        }
+        if (string.IsNullOrEmpty(email))
+        {
+            Assert.True(result!.Errors!.ContainsKey("Email"));
+        }
+        if (string.IsNullOrEmpty(login))
+        {
+            Assert.True(result!.Errors!.ContainsKey("Login"));
+        }
+        if (string.IsNullOrEmpty(password) || password.Length < 8)
+        {
+            Assert.True(result!.Errors!.ContainsKey("Password"));
+        }
+        if (string.IsNullOrEmpty(phoneNumber) || phoneNumber.Length < 11 || phoneNumber.Length > 12)
+        {
+            Assert.True(result!.Errors!.ContainsKey("Contact.PhoneNumber"));
+        }
     }
 }

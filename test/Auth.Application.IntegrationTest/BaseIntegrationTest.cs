@@ -10,6 +10,7 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppF
 {
     protected readonly HttpClient Client;
     private const string Url = "http://localhost:5139/login";
+    protected const string UrlUser = "http://localhost:5139/user";
     private string? _token;
 
     protected BaseIntegrationTest(IntegrationTestWebAppFactory factory)
