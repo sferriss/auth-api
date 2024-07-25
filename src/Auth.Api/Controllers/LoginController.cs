@@ -10,32 +10,25 @@ namespace Auth.Api.Controllers;
 [ApiController]
 [Route("login")]
 [AllowAnonymous]
-public class LoginController : ControllerBase
+public class LoginController(
+    ILoginService loginService,
+    UserMapper userMapper,
+    ICreateAdminUserService createAdminUserService)
+    : ControllerBase
 {
-    private readonly ILoginService _loginService;
-    private readonly ICreateAdminUserService _createAdminUserService;
-    private readonly UserMapper _userMapper;
-
-    public LoginController(ILoginService loginService, UserMapper userMapper, ICreateAdminUserService createAdminUserService)
-    {
-        _loginService = loginService;
-        _userMapper = userMapper;
-        _createAdminUserService = createAdminUserService;
-    }
-
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponse))]
     public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
     {
-        var token = await _loginService.LoginAsync(_userMapper.ToDto(request));
+        var token = await loginService.LoginAsync(userMapper.ToDto(request));
         return Ok(new LoginResponse(token));
     }
-    
+
     [HttpPost("admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> CreateAdminUserAsync()
     {
-        await _createAdminUserService.CreateUserAdminAsync();
+        await createAdminUserService.CreateUserAdminAsync();
         return NoContent();
     }
 }
