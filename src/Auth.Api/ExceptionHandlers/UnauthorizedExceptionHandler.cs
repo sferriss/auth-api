@@ -1,6 +1,5 @@
 ﻿using Auth.Api.ExceptionHandlers.Interfaces;
 using Auth.Api.ExceptionHandlers.Responses;
-using Auth.Application.Exceptions;
 
 namespace Auth.Api.ExceptionHandlers;
 
