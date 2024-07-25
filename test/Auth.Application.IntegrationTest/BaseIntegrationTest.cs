@@ -33,4 +33,9 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppF
         _token = result?.Token;
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
     }
+
+    protected static string FormatUrl(object value)
+    {
+        return $"{UrlUser}/{value}";
+    }
 }

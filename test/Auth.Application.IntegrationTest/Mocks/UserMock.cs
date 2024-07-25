@@ -17,7 +17,7 @@ public static class UserMock
         );
     }
     
-    public static CreateOrUpdateUserDto UpdateUserDto()
+    public static CreateOrUpdateUserDto GetUserDto()
     {
         return new CreateOrUpdateUserDto(
             "Johnes Doe",

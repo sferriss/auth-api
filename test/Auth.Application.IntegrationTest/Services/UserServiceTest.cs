@@ -184,4 +184,34 @@ public class UserServiceTest : BaseIntegrationTest
             Assert.True(result!.Errors!.ContainsKey("Contact.PhoneNumber"));
         }
     }
+    
+    [Fact(DisplayName = "Get user - Should return an user")]
+    public async Task GetAsync_ShouldReturnAnUser()
+    {
+        // Arrange
+        var request = UserMock.GetUserDto();
+
+        // Act
+        await AuthorizeAsync();
+        var response = await Client.PostAsJsonAsync(UrlUser, request);
+        var result = await response.Content.ReadAsJsonAsync<CreateEntityResponse>();
+        
+        var userResponse = await Client.GetAsync(FormatUrl(result?.Id ?? Guid.Empty));
+        var userResult = await userResponse.Content.ReadAsJsonAsync<GetUserResponse>();
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, userResponse.StatusCode);
+        Assert.NotNull(userResult);
+    }
+    
+    [Fact(DisplayName = "Get user - Should return not found")]
+    public async Task GetAsync_ShouldReturnNotFound()
+    {
+        // Act
+        await AuthorizeAsync();
+        var userResponse = await Client.GetAsync(FormatUrl(Guid.Empty));
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, userResponse.StatusCode);
+    }
 }
