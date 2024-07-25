@@ -1,6 +1,6 @@
 ## Api de autenticação
 
-Esse projeto foi construido usando .Net 7, Podman/Docker e PostgresSql
+Esse projeto foi construido usando .Net 8, Docker e PostgresSql
 
 ### Instalação
 1. Clonar repositório
