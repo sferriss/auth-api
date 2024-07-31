@@ -5,28 +5,18 @@ using Auth.Domain.Services;
 
 namespace Auth.Application.Services;
 
-public class LoginService : ILoginService
+public class LoginService(IUserRepository userRepository, ITokenService tokenService, IPasswordHasher passwordHasher)
+    : ILoginService
 {
-    private readonly IUserRepository _userRepository;
-    private readonly ITokenService _tokenService;
-    private readonly IPasswordHasher _passwordHasher;
-
-    public LoginService(IUserRepository userRepository, ITokenService tokenService, IPasswordHasher passwordHasher)
-    {
-        _userRepository = userRepository;
-        _tokenService = tokenService;
-        _passwordHasher = passwordHasher;
-    }
-
     public async Task<string> LoginAsync(LoginDto loginDto)
     {
-        var user = await _userRepository.GetByLoginAsync(loginDto.Login);
+        var user = await userRepository.GetByLoginAsync(loginDto.Login);
 
-        if (user is null || !_passwordHasher.VerifyPassword(user.Password, loginDto.Password))
+        if (user is null || !passwordHasher.VerifyPassword(user.Password, loginDto.Password))
         {
             throw new UnauthorizedException();
         }
         
-        return _tokenService.GenerateToken(user);
+        return tokenService.GenerateToken(user);
     }
 }

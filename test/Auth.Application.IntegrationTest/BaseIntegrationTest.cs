@@ -20,7 +20,7 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppF
 
     protected async Task AuthorizeAsync(string login = "admin", string password = "admin123")
     {
-        if (_token is not null && login == "admin" && password == "admin123")
+        if (_token is not null && login.Equals("admin")  && password.Equals("admin123"))
         {
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
             return;

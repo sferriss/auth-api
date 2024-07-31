@@ -4,27 +4,18 @@ using Auth.Domain.Services;
 
 namespace Auth.Application.Services;
 
-public class CreateAdminUserService : ICreateAdminUserService
+public class CreateAdminUserService(IUserRepository userRepository, IUserService userService) : ICreateAdminUserService
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IUserService _userService;
-
-    public CreateAdminUserService(IUserRepository userRepository, IUserService userService)
-    {
-        _userRepository = userRepository;
-        _userService = userService;
-    }
-
     public async Task CreateUserAdminAsync()
     {
-        var hasAnyUser = await _userRepository.HasAnyAsync();
+        var hasAnyUser = await userRepository.HasAnyAsync();
         if (hasAnyUser)
         {
             return;
         }
         
         var userAdmin = NewUserAdmin();
-        await _userService.CreateAsync(userAdmin);
+        await userService.CreateAsync(userAdmin);
     }
 
     private static CreateOrUpdateUserDto NewUserAdmin()

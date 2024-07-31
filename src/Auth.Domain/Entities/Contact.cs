@@ -6,9 +6,7 @@ namespace Auth.Domain.Entities;
 public sealed class Contact : IEntity
 {
     public Guid Id { get; init; }
-    
     public string PhoneNumber { get; private set; }
-    
     private Contact(){}
     
     public Contact(string phoneNumber)

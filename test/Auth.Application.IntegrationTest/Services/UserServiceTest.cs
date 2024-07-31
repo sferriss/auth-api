@@ -8,12 +8,8 @@ using Auth.Application.IntegrationTest.Mocks;
 
 namespace Auth.Application.IntegrationTest.Services;
 
-public class UserServiceTest : BaseIntegrationTest
+public class UserServiceTest(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
 {
-    public UserServiceTest(IntegrationTestWebAppFactory factory) : base(factory)
-    {
-    }
-    
     [Fact(DisplayName = "Create user - Should create new user")]
     public async Task CreateAsync_ShouldCreateNewUser()
     {
@@ -132,20 +128,21 @@ public class UserServiceTest : BaseIntegrationTest
     }
     
     [Theory(DisplayName = "Create user - Should return bad request when invalid request")]
-    [InlineData("", "john@example.com", "john", "stringadasdasd", "00123656789")]
-    [InlineData("John Doe", "", "john", "stringadasdasd", "00123656789")]
-    [InlineData("John Doe", "john@example.com", "", "stringadasdasd", "00123656789")]
-    [InlineData("John Doe", "john@example.com", "john", "", "00123656789")]
-    [InlineData("John Doe", "john@example.com", "john", "stri", "00123656789")]
-    [InlineData("John Doe", "john@example.com", "john", "stringadasdasd", "")]
-    [InlineData("John Doe", "john@example.com", "john", "stringadasdasd", "00123656")]
-    [InlineData("John Doe", "john@example.com", "john", "stringadasdasd", "0012365678923423")]
+    [InlineData("", "john@example.com", "john", "stringadasdasd", "00123656789", "Name")]
+    [InlineData("John Doe", "", "john", "stringadasdasd", "00123656789", "Email")]
+    [InlineData("John Doe", "john@example.com", "", "stringadasdasd", "00123656789", "Login")]
+    [InlineData("John Doe", "john@example.com", "john", "", "00123656789", "Password")]
+    [InlineData("John Doe", "john@example.com", "john", "stri", "00123656789", "Password")]
+    [InlineData("John Doe", "john@example.com", "john", "stringadasdasd", "", "Contact.PhoneNumber")]
+    [InlineData("John Doe", "john@example.com", "john", "stringadasdasd", "00123656", "Contact.PhoneNumber")]
+    [InlineData("John Doe", "john@example.com", "john", "stringadasdasd", "0012365678923423", "Contact.PhoneNumber")]
     public async Task CreateAsync_ShouldReturnBadRequest_WhenInvalidRequest(
         string name,
         string email,
         string login,
         string password,
-        string phoneNumber)
+        string phoneNumber,
+        string expectedErrorMessage)
     {
         // Arrange
         var request = new CreateUserRequest(
@@ -162,27 +159,7 @@ public class UserServiceTest : BaseIntegrationTest
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        
-        if (string.IsNullOrEmpty(name))
-        {
-            Assert.True(result!.Errors!.ContainsKey("Name"));
-        }
-        if (string.IsNullOrEmpty(email))
-        {
-            Assert.True(result!.Errors!.ContainsKey("Email"));
-        }
-        if (string.IsNullOrEmpty(login))
-        {
-            Assert.True(result!.Errors!.ContainsKey("Login"));
-        }
-        if (string.IsNullOrEmpty(password) || password.Length < 8)
-        {
-            Assert.True(result!.Errors!.ContainsKey("Password"));
-        }
-        if (string.IsNullOrEmpty(phoneNumber) || phoneNumber.Length < 11 || phoneNumber.Length > 12)
-        {
-            Assert.True(result!.Errors!.ContainsKey("Contact.PhoneNumber"));
-        }
+        Assert.True(result!.Errors!.ContainsKey(expectedErrorMessage));
     }
     
     [Fact(DisplayName = "Get user - Should return an user")]

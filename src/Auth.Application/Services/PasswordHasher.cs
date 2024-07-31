@@ -4,14 +4,9 @@ using Microsoft.Extensions.Options;
 
 namespace Auth.Application.Services;
 
-public class PasswordHasher : IPasswordHasher
+public class PasswordHasher(IOptions<ApplicationSettings> applicationSettings) : IPasswordHasher
 {
-    private readonly ApplicationSettings _applicationSettings;
-
-    public PasswordHasher(IOptions<ApplicationSettings> applicationSettings)
-    {
-        _applicationSettings = applicationSettings.Value;
-    }
+    private readonly ApplicationSettings _applicationSettings = applicationSettings.Value;
 
     public string HashPassword(string password)
     {

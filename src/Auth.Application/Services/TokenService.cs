@@ -9,14 +9,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Auth.Application.Services;
 
-public class TokenService : ITokenService
+public class TokenService(IOptions<ApplicationSettings> settings) : ITokenService
 {
-    private readonly ApplicationSettings _settings;
-
-    public TokenService(IOptions<ApplicationSettings> settings)
-    {
-        _settings = settings.Value;
-    }
+    private readonly ApplicationSettings _settings = settings.Value;
 
     public string GenerateToken(User user)
     {
