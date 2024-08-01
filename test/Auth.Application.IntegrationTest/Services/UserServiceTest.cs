@@ -171,7 +171,7 @@ public class UserServiceTest(IntegrationTestWebAppFactory factory) : BaseIntegra
             "johndoe2@example.com",
             "john2",
             "stringadasdasd",
-            new UserContactRequest("00123156489"));;
+            new UserContactRequest("00123156489"));
 
         // Act
         await AuthorizeAsync();
