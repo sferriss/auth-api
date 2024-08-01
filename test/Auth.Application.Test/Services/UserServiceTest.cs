@@ -197,7 +197,7 @@ public class UserServiceTest
         _userRepositoryMock.Setup(x => x.GetAllContactsAsync()).ReturnsAsync(users.ToArray);
 
         // Act
-        var result = await _userService.GetAsync();
+        var result = await _userService.ListAsync();
 
         // Assert
         Assert.Equal(10, result.Length);
@@ -210,7 +210,7 @@ public class UserServiceTest
         _userRepositoryMock.Setup(x => x.GetAllContactsAsync())!.ReturnsAsync((User[]?)null);
 
         // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => _userService.GetAsync());
+        await Assert.ThrowsAsync<NotFoundException>(() => _userService.ListAsync());
     }
 
     [Fact(DisplayName = "Get users - Should throw exception when users not found")]
@@ -220,6 +220,6 @@ public class UserServiceTest
         _userRepositoryMock.Setup(x => x.GetAllContactsAsync()).ReturnsAsync(Array.Empty<User>());
 
         // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => _userService.GetAsync());
+        await Assert.ThrowsAsync<NotFoundException>(() => _userService.ListAsync());
     }
 }

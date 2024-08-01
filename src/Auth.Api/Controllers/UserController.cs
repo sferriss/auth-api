@@ -44,9 +44,9 @@ public class UserController(IUserService userService, UserMapper userMapper) : C
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetUserResponse[]))]
-    public async Task<IActionResult> GetAsync()
+    public async Task<IActionResult> ListAsync()
     {
-        var result = await userService.GetAsync();
+        var result = await userService.ListAsync();
         return Ok(result.Select(userMapper.ToResponse));
     }
 }

@@ -8,5 +8,5 @@ public interface IUserService
     public Task UpdateAsync(Guid id, CreateOrUpdateUserDto userDto);
     public Task<UserDto> GetAsync(Guid id);
     public Task DeleteAsync(Guid id);
-    public Task<UserDto[]> GetAsync();
+    public Task<UserDto[]> ListAsync();
 }

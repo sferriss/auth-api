@@ -40,13 +40,9 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         _dbContainer.ExecScriptAsync(script);
     }
 
-    public Task InitializeAsync()
-    {
-        return _dbContainer.StartAsync();
-    }
-
-    public new Task DisposeAsync()
-    {
-        return _dbContainer.StopAsync();
-    }
+    public Task InitializeAsync() => 
+        _dbContainer.StartAsync();
+    
+    public new Task DisposeAsync() => 
+        _dbContainer.StopAsync();
 }

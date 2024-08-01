@@ -6,21 +6,17 @@ using Auth.Application.Extensions;
 
 namespace Auth.Application.IntegrationTest;
 
-public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppFactory>
+public abstract class BaseIntegrationTest(IntegrationTestWebAppFactory factory)
+    : IClassFixture<IntegrationTestWebAppFactory>
 {
-    protected readonly HttpClient Client;
+    protected readonly HttpClient Client = factory.CreateClient();
     private const string Url = "http://localhost:5139/login";
     protected const string UrlUser = "http://localhost:5139/user";
     private string? _token;
 
-    protected BaseIntegrationTest(IntegrationTestWebAppFactory factory)
-    {
-        Client = factory.CreateClient();
-    }
-
     protected async Task AuthorizeAsync(string login = "admin", string password = "admin123")
     {
-        if (_token is not null && login.Equals("admin")  && password.Equals("admin123"))
+        if (_token is not null && login.Equals("admin") && password.Equals("admin123"))
         {
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
             return;

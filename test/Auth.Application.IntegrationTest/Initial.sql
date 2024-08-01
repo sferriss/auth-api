@@ -19,5 +19,13 @@ CREATE TABLE auth.contact (
                               user_id UUID REFERENCES auth.user(id) ON DELETE CASCADE
 );
 
-insert into auth.user (id, name, email, login, password)
-values (uuid_generate_v4(), 'User Admin', 'admin@email.com', 'admin', '$2b$12$zZOzsp26Ab50QfNcUkAfIeI6W2gtfdB7.QOgm03sk3lamwyCCJqwW');
+WITH inserted_user AS (
+INSERT INTO auth.user (id, name, email, login, password)
+VALUES (uuid_generate_v4(), 'User Admin', 'admin@email.com', 'admin', '$2b$12$zZOzsp26Ab50QfNcUkAfIeI6W2gtfdB7.QOgm03sk3lamwyCCJqwW')
+    RETURNING id
+    )
+
+INSERT INTO auth.contact (id, phone_number, user_id)
+SELECT uuid_generate_v4(), '999999999', id
+FROM inserted_user;
+       

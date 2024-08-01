@@ -84,13 +84,13 @@ public class UserService(IUserRepository userRepository, IUnitOfWork unitOfWork,
         await unitOfWork.CommitAsync();
     }
 
-    public async Task<UserDto[]> GetAsync()
+    public async Task<UserDto[]> ListAsync()
     {
         var users = await userRepository.GetAllContactsAsync();
         
-        if (users is null || !users.Any())
+        if (users is null || users.Length is 0)
         {
-            throw new NotFoundException("User not found");
+            throw new NotFoundException("Users not found");
         }
 
         return users

@@ -127,7 +127,6 @@ public class UserServiceTest(IntegrationTestWebAppFactory factory) : BaseIntegra
         Assert.Equal("Phone number already exists", result?.Title);
     }
     
-    [Theory(DisplayName = "Create user - Should return bad request when invalid request")]
     [InlineData("", "john@example.com", "john", "stringadasdasd", "00123656789", "Name")]
     [InlineData("John Doe", "", "john", "stringadasdasd", "00123656789", "Email")]
     [InlineData("John Doe", "john@example.com", "", "stringadasdasd", "00123656789", "Login")]
@@ -136,6 +135,7 @@ public class UserServiceTest(IntegrationTestWebAppFactory factory) : BaseIntegra
     [InlineData("John Doe", "john@example.com", "john", "stringadasdasd", "", "Contact.PhoneNumber")]
     [InlineData("John Doe", "john@example.com", "john", "stringadasdasd", "00123656", "Contact.PhoneNumber")]
     [InlineData("John Doe", "john@example.com", "john", "stringadasdasd", "0012365678923423", "Contact.PhoneNumber")]
+    [Theory(DisplayName = "Create user - Should return bad request when invalid request")]
     public async Task CreateAsync_ShouldReturnBadRequest_WhenInvalidRequest(
         string name,
         string email,
@@ -166,7 +166,12 @@ public class UserServiceTest(IntegrationTestWebAppFactory factory) : BaseIntegra
     public async Task GetAsync_ShouldReturnAnUser()
     {
         // Arrange
-        var request = UserMock.GetUserDto();
+        var request =  new CreateUserRequest(
+            "John Doe",
+            "johndoe2@example.com",
+            "john2",
+            "stringadasdasd",
+            new UserContactRequest("00123156489"));;
 
         // Act
         await AuthorizeAsync();
@@ -190,5 +195,126 @@ public class UserServiceTest(IntegrationTestWebAppFactory factory) : BaseIntegra
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, userResponse.StatusCode);
+    }
+    
+    [Fact(DisplayName = "Update user - Should return not found")]
+    public async Task UpdateAsync_ShouldReturnNotFound()
+    {
+        // Arrange
+        var request = UserMock.UpdateUserRequest();
+        
+        // Act
+        await AuthorizeAsync();
+        var userResponse = await Client.PatchAsJsonAsync(FormatUrl(Guid.Empty), request);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, userResponse.StatusCode);
+    }
+    
+    [Fact(DisplayName = "Update user - Should update an user")]
+    public async Task UpdateAsync_ShouldUpdateAnUser()
+    {
+        // Arrange
+        var createUserRequest = new CreateUserRequest(
+            "Johns Doe",
+            "johnsdoe@example.com",
+            "johns_doe",
+            "stringadasdasd",
+            new UserContactRequest("00123456759")
+        );
+        var updateUserRequest = UserMock.UpdateUserRequest();
+
+        // Act
+        await AuthorizeAsync();
+        var response = await Client.PostAsJsonAsync(UrlUser, createUserRequest);
+        var result = await response.Content.ReadAsJsonAsync<CreateEntityResponse>();
+        
+        var userResponse = await Client.PatchAsJsonAsync(FormatUrl(result?.Id!), updateUserRequest);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NoContent, userResponse.StatusCode);
+    }
+    
+    [InlineData("stringadasdasdasdasdradaidiashdjasodjasdlkasjdasjdlkajd", "john@example.com", "john", "stringadasdasd", "00123656789", "Name")]
+    [InlineData("John Doe", "", "john", "stringadasdasd", "00123656789", "Email")]
+    [InlineData("John Doe", "john@example.com", "", "stringadasdasd", "00123656789", "Login")]
+    [InlineData("John Doe", "john@example.com", "john", "", "00123656789", "Password")]
+    [InlineData("John Doe", "john@example.com", "john", "stri", "00123656789", "Password")]
+    [InlineData("John Doe", "john@example.com", "john", "stringadasdasd", "", "Contact.PhoneNumber")]
+    [InlineData("John Doe", "john@example.com", "john", "stringadasdasd", "00123656", "Contact.PhoneNumber")]
+    [InlineData("John Doe", "john@example.com", "john", "stringadasdasd", "0012365678923423", "Contact.PhoneNumber")]
+    [Theory(DisplayName = "Create user - Should return bad request when invalid request")]
+    public async Task UpdateAsync_ShouldReturnBadRequest_WhenInvalidRequest(
+        string name,
+        string email,
+        string login,
+        string password,
+        string phoneNumber,
+        string expectedErrorMessage)
+    {
+        // Arrange
+        var request = new UpdateUserRequest(
+            name,
+            email,
+            login,
+            password,
+            new UserContactRequest(phoneNumber));
+
+        // Act
+        await AuthorizeAsync();
+        var response = await Client.PatchAsJsonAsync(FormatUrl(Guid.Empty), request);
+        var result = await response.Content.ReadAsJsonAsync<ExceptionResponse>();
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.True(result!.Errors!.ContainsKey(expectedErrorMessage));
+    }
+    
+    [Fact(DisplayName = "Delete user - Should return not found")]
+    public async Task DeleteAsync_ShouldReturnNotFound()
+    {
+        // Act
+        await AuthorizeAsync();
+        var userResponse = await Client.DeleteAsync(FormatUrl(Guid.Empty));
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, userResponse.StatusCode);
+    }
+    
+    [Fact(DisplayName = "Delete user - Should return delete an user")]
+    public async Task DeleteAsync_ShouldDeleteAnUser()
+    {
+        //Arrange
+        var createUserRequest = new CreateUserRequest(
+            "Johns Doe",
+            "johns1doe@example.com",
+            "johns1_doe",
+            "stringadasdasd",
+            new UserContactRequest("00523456759")
+        );
+
+        // Act
+        await AuthorizeAsync();
+        var response = await Client.PostAsJsonAsync(UrlUser, createUserRequest);
+        var result = await response.Content.ReadAsJsonAsync<CreateEntityResponse>();
+        
+        var userResponse = await Client.DeleteAsync(FormatUrl(result?.Id!));
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NoContent, userResponse.StatusCode);
+    }
+    
+    [Fact(DisplayName = "Get users - Should return a user list")]
+    public async Task ListAsync_ShouldReturnAUserList()
+    {
+        // Act
+        await AuthorizeAsync();
+        var userResponse = await Client.GetAsync(UrlUser);
+        var userResult = await userResponse.Content.ReadAsJsonAsync<GetUserResponse[]>();
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, userResponse.StatusCode);
+        Assert.NotNull(userResult);
+        Assert.NotEmpty(userResult);
     }
 }
